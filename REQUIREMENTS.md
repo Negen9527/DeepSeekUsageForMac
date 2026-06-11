@@ -178,8 +178,7 @@ DeepSeekUsageForMac/
 │   └── Views/
 │       ├── DesktopWidgetView.swift        # 桌面悬浮窗口（主仪表盘 + 设置按钮）
 │       ├── ConfigPanelView.swift          # 配置面板（Token、预算）
-│       ├── MenuBarContentView.swift       # 菜单栏面板
-│       └── SettingsView.swift             # 设置窗口（可保留备用）
+│       └── MenuBarContentView.swift       # 菜单栏面板
 └── DeepSeekUsageWidget/                  # WidgetKit 扩展
     ├── DeepSeekUsageWidget.swift          # Widget 入口
     ├── Provider.swift                     # TimelineProvider
@@ -216,16 +215,16 @@ DeepSeekUsageForMac/
 ## 7. 待办事项
 
 ### 需求变更（v2）
-- [ ] 移除 LoginView 登录流程，应用启动直接进仪表盘
-- [ ] 移除 `/user/balance` 接口，替换为 `usage/amount` + `usage/cost`
-- [ ] 主界面右上角添加设置按钮（齿轮图标）
-- [ ] 新增 ConfigPanelView：Token 输入 + 月度预算 + 手动刷新
-- [ ] 更新 DeepSeekAPIService：适配两个新接口，支持 month/year 参数
-- [ ] 更新 DashboardViewModel：移除 balance 逻辑，适配新的用量/费用数据模型
-- [ ] 更新 DeepSeekUsageApp：移除登录/仪表盘切换逻辑，直接显示仪表盘
-- [ ] 更新 MenuBarContentView：未配置 Token 时显示引导提示
-- [ ] 更新 WidgetSnapshot：移除 balance 字段，适配新数据结构
-- [ ] 重新编译验证 + 提交
+- [x] 移除 LoginView 登录流程，应用启动直接进仪表盘
+- [x] 移除 `/user/balance` 接口，替换为 `usage/amount` + `usage/cost`
+- [x] 主界面右上角添加设置按钮（齿轮图标）
+- [x] 新增 ConfigPanelView：Token 输入 + 月度预算 + 手动刷新
+- [x] 更新 DeepSeekAPIService：适配两个新接口，支持 month/year 参数
+- [x] 更新 DashboardViewModel：移除 balance 逻辑，适配新的用量/费用数据模型
+- [x] 更新 DeepSeekUsageApp：移除登录/仪表盘切换逻辑，直接显示仪表盘
+- [x] 更新 MenuBarContentView：未配置 Token 时显示引导提示
+- [x] 更新 WidgetSnapshot：移除 balance 字段，适配新数据结构
+- [x] 重新编译验证 + 提交 (81e5540)
 
 ### 基础架构
 - [x] 项目结构搭建（Shared / App / Widget 三模块）
