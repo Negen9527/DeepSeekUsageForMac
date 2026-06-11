@@ -5,6 +5,7 @@ import WidgetKit
 struct LargeWidgetView: View {
     let entry: UsageEntry
     let snapshot: WidgetSnapshot
+    @State private var useLineChart: Bool = true
 
     init(entry: UsageEntry) {
         self.entry = entry
@@ -91,17 +92,25 @@ struct LargeWidgetView: View {
                         .font(.system(size: 10, weight: .semibold))
                         .foregroundColor(AppTheme.textSecondary)
                     Spacer()
-                    Text("Tokens")
-                        .font(.system(size: 9))
-                        .foregroundColor(AppTheme.textMuted)
+                    Picker("", selection: $useLineChart) {
+                        Text("折线").tag(true)
+                        Text("柱状").tag(false)
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(width: 80)
+                    .controlSize(.mini)
                 }
 
-                TrendChartViewCompact(
-                    dataPoints: snapshot.trend,
-                    chartHeight: 50,
-                    barWidth: 20,
-                    spacing: 8
-                )
+                if useLineChart {
+                    TrendLineChartView(dataPoints: snapshot.trend, chartHeight: 50)
+                } else {
+                    TrendChartViewCompact(
+                        dataPoints: snapshot.trend,
+                        chartHeight: 50,
+                        barWidth: 20,
+                        spacing: 8
+                    )
+                }
             }
             .padding(10)
             .background(

@@ -5,6 +5,7 @@ import SwiftUI
 struct DesktopWidgetView: View {
     @ObservedObject var viewModel: DashboardViewModel
     @State private var selectedSize: WidgetSize = .large
+    @State private var useLineChart: Bool = true
 
     enum WidgetSize: String, CaseIterable {
         case compact = "紧凑"
@@ -204,9 +205,19 @@ struct DesktopWidgetView: View {
                     Image(systemName: AppTheme.iconTrend).font(.system(size: 10)).foregroundColor(AppTheme.accentCyan)
                     Text("7日趋势").font(.system(size: 10, weight: .semibold)).foregroundColor(AppTheme.textSecondary)
                     Spacer()
-                    Text("Tokens").font(.system(size: 9)).foregroundColor(AppTheme.textMuted)
+                    Picker("", selection: $useLineChart) {
+                        Text("折线").tag(true)
+                        Text("柱状").tag(false)
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(width: 100)
+                    .controlSize(.mini)
                 }
-                TrendChartViewCompact(dataPoints: snapshot.trend, chartHeight: 50, barWidth: 24, spacing: 8)
+                if useLineChart {
+                    TrendLineChartView(dataPoints: snapshot.trend, chartHeight: 50)
+                } else {
+                    TrendChartViewCompact(dataPoints: snapshot.trend, chartHeight: 50, barWidth: 24, spacing: 8)
+                }
             }
             .padding(10)
             .background(RoundedRectangle(cornerRadius: 10).fill(AppTheme.surface))

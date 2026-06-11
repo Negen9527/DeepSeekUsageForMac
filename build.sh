@@ -65,6 +65,7 @@ swiftc $SWIFT_BASE \
     "$SCRIPT_DIR/DeepSeekUsageWidget/Views/Components/StatsCardView.swift" \
     "$SCRIPT_DIR/DeepSeekUsageWidget/Views/Components/UsageProgressBar.swift" \
     "$SCRIPT_DIR/DeepSeekUsageWidget/Views/Components/TrendChartView.swift" \
+    "$SCRIPT_DIR/DeepSeekUsageWidget/Views/Components/TrendLineChartView.swift" \
     "$SCRIPT_DIR/DeepSeekUsageWidget/Views/Components/AnimatedPieChartView.swift" \
     "$SCRIPT_DIR/DeepSeekUsageApp/DeepSeekUsageApp.swift" \
     2>&1 || err "App compilation failed"
@@ -86,6 +87,7 @@ swiftc $SWIFT_BASE \
     "$SCRIPT_DIR/DeepSeekUsageWidget/Views/Components/StatsCardView.swift" \
     "$SCRIPT_DIR/DeepSeekUsageWidget/Views/Components/UsageProgressBar.swift" \
     "$SCRIPT_DIR/DeepSeekUsageWidget/Views/Components/TrendChartView.swift" \
+    "$SCRIPT_DIR/DeepSeekUsageWidget/Views/Components/TrendLineChartView.swift" \
     "$SCRIPT_DIR/DeepSeekUsageWidget/Views/Components/AnimatedPieChartView.swift" \
     "$SCRIPT_DIR/DeepSeekUsageWidget/Views/SmallWidgetView.swift" \
     "$SCRIPT_DIR/DeepSeekUsageWidget/Views/MediumWidgetView.swift" \
