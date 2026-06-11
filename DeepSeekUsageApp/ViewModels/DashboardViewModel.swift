@@ -22,6 +22,7 @@ final class DashboardViewModel: ObservableObject {
     init() {
         loadToken()
         loadBudget()
+        loadCachedSnapshot()
         if isTokenValid {
             writeSnapshot()
             Task { await refresh() }
@@ -128,11 +129,20 @@ final class DashboardViewModel: ObservableObject {
     // MARK: - Snapshot
 
     private func writeSnapshot() {
-        tracker.buildAndWriteSnapshot(
+        lastSnapshot = tracker.buildAndWriteSnapshot(
             usageData: usageData,
             monthlyBudget: monthlyBudget
         )
         WidgetCenter.shared.reloadAllTimelines()
+    }
+
+    private func loadCachedSnapshot() {
+        guard let defaults = UserDefaults(suiteName: AppConstants.appGroupID),
+              let data = defaults.data(forKey: AppConstants.snapshotKey),
+              let snapshot = try? JSONDecoder().decode(WidgetSnapshot.self, from: data) else {
+            return
+        }
+        lastSnapshot = snapshot
     }
 
     // MARK: - Timer

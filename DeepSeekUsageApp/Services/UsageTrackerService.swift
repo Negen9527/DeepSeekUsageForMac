@@ -25,18 +25,17 @@ final class UsageTrackerService {
         try? data.write(to: fileURL, options: .atomic)
     }
 
-    /// Record today's usage.
+    /// Record today's usage. Overwrites today's entry with the latest API value each refresh.
     func recordDailyUsage(tokens: Int, requests: Int, cost: Double) {
         var history = loadHistory()
         let today = dailyKey(for: Date())
 
         if let index = history.firstIndex(where: { $0.dateString == today }) {
-            let existing = history[index]
             history[index] = WidgetSnapshot.DailyPoint(
                 dateString: today,
-                tokens: existing.tokens + tokens,
-                requests: existing.requests + requests,
-                cost: existing.cost + cost
+                tokens: tokens,
+                requests: requests,
+                cost: cost
             )
         } else {
             history.append(WidgetSnapshot.DailyPoint(
@@ -97,7 +96,7 @@ final class UsageTrackerService {
 
     // MARK: - Snapshot
 
-    func buildAndWriteSnapshot(usageData: UsageData?, monthlyBudget: Double) {
+    func buildAndWriteSnapshot(usageData: UsageData?, monthlyBudget: Double) -> WidgetSnapshot {
         let monthly = usageData ?? UsageData(
             promptTokens: 0, completionTokens: 0, totalRequests: 0, totalCost: 0
         )
@@ -126,6 +125,7 @@ final class UsageTrackerService {
         if let data = try? JSONEncoder().encode(snapshot) {
             defaults?.set(data, forKey: AppConstants.snapshotKey)
         }
+        return snapshot
     }
 }
 

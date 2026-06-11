@@ -184,8 +184,8 @@ PLIST
 
 # ==================== Code Sign ====================
 info "Code signing..."
-codesign --force --deep -s - "$APP_DIR/Contents/PlugIns/DeepSeekUsageWidget.appex" 2>&1 || err "Widget signing failed"
-codesign --force --deep -s - "$APP_DIR" 2>&1 || err "App signing failed"
+codesign --force --deep -s - --entitlements "$SCRIPT_DIR/DeepSeekUsageWidget.entitlements" "$APP_DIR/Contents/PlugIns/DeepSeekUsageWidget.appex" 2>&1 || err "Widget signing failed"
+codesign --force --deep -s - --entitlements "$SCRIPT_DIR/DeepSeekUsageApp.entitlements" "$APP_DIR" 2>&1 || err "App signing failed"
 ok "Code signed"
 
 # ==================== Clean up ====================
