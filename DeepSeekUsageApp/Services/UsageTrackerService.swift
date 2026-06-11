@@ -82,11 +82,29 @@ final class UsageTrackerService {
         return (promptTokens, completionTokens, totalRequests, estimatedCost)
     }
 
+    /// Compute last month's usage for comparison.
+    func lastMonthUsage() -> (tokens: Int, requests: Int, cost: Double) {
+        let history = loadHistory()
+        let calendar = Calendar.current
+        guard let lastMonth = calendar.date(byAdding: .month, value: -1, to: Date()) else {
+            return (0, 0, 0)
+        }
+        let lastMonthKey = monthKey(for: lastMonth)
+        let monthPoints = history.filter { monthKey(for: dateFromKey($0.dateString)) == lastMonthKey }
+
+        let tokens = monthPoints.reduce(0) { $0 + $1.tokens }
+        let requests = monthPoints.reduce(0) { $0 + $1.requests }
+        let cost = monthPoints.reduce(0.0) { $0 + $1.cost }
+
+        return (tokens, requests, cost)
+    }
+
     // MARK: - Snapshot
 
     /// Build a WidgetSnapshot and write it to shared UserDefaults for the widget to read.
     func buildAndWriteSnapshot(balance: BalanceInfo?, monthlyBudget: Double) {
         let monthly = currentMonthUsage()
+        let lastMonth = lastMonthUsage()
 
         let snapshot = WidgetSnapshot(
             lastUpdated: Date(),
@@ -104,7 +122,15 @@ final class UsageTrackerService {
                 estimatedCost: monthly.estimatedCost,
                 monthlyBudget: monthlyBudget
             ),
-            trend: last7Days()
+            trend: last7Days(),
+            monthlyComparison: WidgetSnapshot.MonthlyComparison(
+                currentMonthCost: monthly.estimatedCost,
+                previousMonthCost: lastMonth.cost,
+                currentMonthTokens: monthly.promptTokens + monthly.completionTokens,
+                previousMonthTokens: lastMonth.tokens,
+                currentMonthRequests: monthly.totalRequests,
+                previousMonthRequests: lastMonth.requests
+            )
         )
 
         if let data = try? JSONEncoder().encode(snapshot) {

@@ -222,7 +222,29 @@ struct DesktopWidgetView: View {
             .padding(10)
             .background(RoundedRectangle(cornerRadius: 10).fill(AppTheme.surface))
 
-            // Row 4: Cost
+            // Row 4: Monthly comparison
+            VStack(spacing: 6) {
+                HStack {
+                    Text("月度对比").font(.system(size: 10, weight: .semibold)).foregroundColor(AppTheme.textSecondary)
+                    Spacer()
+                    Text("本月 vs 上月").font(.system(size: 9)).foregroundColor(AppTheme.textMuted)
+                }
+                HStack(spacing: 12) {
+                    comparisonItem(label: "费用", current: snapshot.comparison.currentMonthCost,
+                                   previous: snapshot.comparison.previousMonthCost,
+                                   format: { String(format: "¥%.0f", $0) })
+                    comparisonItem(label: "Tokens", current: Double(snapshot.comparison.currentMonthTokens),
+                                   previous: Double(snapshot.comparison.previousMonthTokens),
+                                   format: { formatNumber(Int($0)) })
+                    comparisonItem(label: "请求", current: Double(snapshot.comparison.currentMonthRequests),
+                                   previous: Double(snapshot.comparison.previousMonthRequests),
+                                   format: { formatNumber(Int($0)) })
+                }
+            }
+            .padding(10)
+            .background(RoundedRectangle(cornerRadius: 10).fill(AppTheme.surface))
+
+            // Row 5: Cost
             VStack(spacing: 4) {
                 HStack {
                     Text("总费用").font(.system(size: 10)).foregroundColor(AppTheme.textSecondary)
@@ -235,7 +257,7 @@ struct DesktopWidgetView: View {
             .padding(10)
             .background(RoundedRectangle(cornerRadius: 10).fill(AppTheme.surface))
 
-            // Row 5: Footer branding + update time
+            // Row 6: Footer branding + update time
             HStack {
                 HStack(spacing: 4) {
                     Circle().fill(AppTheme.accentCyan).frame(width: 6, height: 6)
@@ -306,6 +328,28 @@ struct DesktopWidgetView: View {
         case .medium:  return 200
         case .large:   return 600
         }
+    }
+
+    private func comparisonItem(label: String, current: Double, previous: Double,
+                                 format: @escaping (Double) -> String) -> some View {
+        let change = previous > 0 ? ((current - previous) / previous * 100) : 0
+        let isUp = change >= 0
+        return VStack(spacing: 2) {
+            Text(label)
+                .font(.system(size: 9))
+                .foregroundColor(AppTheme.textMuted)
+            Text(format(current))
+                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .foregroundColor(AppTheme.textPrimary)
+            HStack(spacing: 2) {
+                Image(systemName: isUp ? "arrow.up" : "arrow.down")
+                    .font(.system(size: 7, weight: .bold))
+                Text(String(format: "%.0f%%", abs(change)))
+                    .font(.system(size: 9, weight: .semibold))
+            }
+            .foregroundColor(isUp ? AppTheme.accentRed : AppTheme.accentGreen)
+        }
+        .frame(maxWidth: .infinity)
     }
 
     private func formatNumber(_ n: Int) -> String {

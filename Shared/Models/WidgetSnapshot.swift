@@ -6,6 +6,7 @@ struct WidgetSnapshot: Codable {
     let balance: BalanceSnapshot
     let monthlyUsage: MonthlyUsageSnapshot
     let trend: [DailyPoint]
+    let monthlyComparison: MonthlyComparison?
 
     struct BalanceSnapshot: Codable {
         let currency: String
@@ -29,11 +30,31 @@ struct WidgetSnapshot: Codable {
         let requests: Int
         let cost: Double
     }
+
+    struct MonthlyComparison: Codable {
+        let currentMonthCost: Double
+        let previousMonthCost: Double
+        let currentMonthTokens: Int
+        let previousMonthTokens: Int
+        let currentMonthRequests: Int
+        let previousMonthRequests: Int
+    }
 }
 
 // MARK: - Computed properties
 
 extension WidgetSnapshot {
+    var comparison: MonthlyComparison {
+        monthlyComparison ?? MonthlyComparison(
+            currentMonthCost: monthlyUsage.estimatedCost,
+            previousMonthCost: 0,
+            currentMonthTokens: totalTokens,
+            previousMonthTokens: 0,
+            currentMonthRequests: monthlyUsage.totalRequests,
+            previousMonthRequests: 0
+        )
+    }
+
     var totalTokens: Int {
         monthlyUsage.promptTokens + monthlyUsage.completionTokens
     }
@@ -86,7 +107,15 @@ extension WidgetSnapshot {
                 DailyPoint(dateString: "周五", tokens: 4200, requests: 102, cost: 3.10),
                 DailyPoint(dateString: "周六", tokens: 5100, requests: 115, cost: 3.90),
                 DailyPoint(dateString: "周日", tokens: 6500, requests: 121, cost: 4.60)
-            ]
+            ],
+            monthlyComparison: MonthlyComparison(
+                currentMonthCost: 34.20,
+                previousMonthCost: 28.50,
+                currentMonthTokens: 45200,
+                previousMonthTokens: 38100,
+                currentMonthRequests: 847,
+                previousMonthRequests: 720
+            )
         )
     }
 }
