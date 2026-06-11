@@ -216,11 +216,11 @@ DeepSeekUsageForMac/
 - [x] Provider.swift：TimelineProvider，从 App Group 读取快照
 
 ### 待完成
-- [ ] Large 模式底部添加品牌标识 "DeepSeek" + 更新时间
-- [ ] 趋势图增加折线图选项（当前仅有柱状图）
-- [ ] 增加按模型（chat/reasoner）拆分的 Token 统计
-- [ ] 增加月度对比（本月 vs 上月）
-- [ ] 添加应用图标（AppIcon）
+- [x] Large 模式底部添加品牌标识 "DeepSeek" + 更新时间
+- [x] 趋势图增加折线图选项（当前仅有柱状图）
+- [x] 增加月度对比（本月 vs 上月）
+- [ ] 增加按模型（chat/reasoner）拆分的 Token 统计（需 DeepSeek API 支持，当前 `/user/balance` 不返回模型维度数据）
+- [ ] 添加应用图标（AppIcon 需设计稿）
 
 ---
 
