@@ -1,0 +1,61 @@
+name: DeepSeekUsageForMac
+options:
+  bundleIdPrefix: com.deepseekusage
+  deploymentTarget:
+    macOS: "14.0"
+  settings:
+    SWIFT_VERSION: "5.9"
+    DEVELOPMENT_TEAM: ""
+  usesTabs: false
+  indentWidth: 4
+  tabWidth: 4
+
+targets:
+  DeepSeekUsageApp:
+    type: application
+    platform: macOS
+    sources:
+      - path: DeepSeekUsageApp
+        excludes:
+          - "Info.plist"
+      - path: Shared
+    settings:
+      base:
+        INFOPLIST_FILE: DeepSeekUsageApp/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        PRODUCT_BUNDLE_IDENTIFIER: com.deepseekusage.app
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+        CODE_SIGN_ENTITLEMENTS: DeepSeekUsageApp/DeepSeekUsageApp.entitlements
+        INFOPLIST_KEY_LSUIElement: YES
+      configs:
+        Debug:
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
+    dependencies:
+      - target: DeepSeekUsageWidget
+    preBuildScripts:
+      - name: "SwiftLint"
+        script: |
+          if which swiftlint > /dev/null; then
+            swiftlint
+          fi
+        basedOnDependencyAnalysis: false
+
+  DeepSeekUsageWidget:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: DeepSeekUsageWidget
+        excludes:
+          - "Info.plist"
+      - path: Shared
+    settings:
+      base:
+        INFOPLIST_FILE: DeepSeekUsageWidget/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        PRODUCT_BUNDLE_IDENTIFIER: com.deepseekusage.app.widget
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+        CODE_SIGN_ENTITLEMENTS: DeepSeekUsageWidget/DeepSeekUsageWidget.entitlements
+      configs:
+        Debug:
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
