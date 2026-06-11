@@ -148,6 +148,20 @@ struct LargeWidgetView: View {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(AppTheme.surface)
             )
+
+            // Row 5: Footer branding + update time
+            HStack {
+                HStack(spacing: 4) {
+                    Circle().fill(AppTheme.accentCyan).frame(width: 6, height: 6)
+                    Text("DeepSeek")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(AppTheme.accentCyan)
+                }
+                Spacer()
+                Text(lastUpdatedText)
+                    .font(.system(size: 9))
+                    .foregroundColor(AppTheme.textMuted)
+            }
         }
     }
 

@@ -223,6 +223,24 @@ struct DesktopWidgetView: View {
             }
             .padding(10)
             .background(RoundedRectangle(cornerRadius: 10).fill(AppTheme.surface))
+
+            // Row 5: Footer branding + update time
+            HStack {
+                HStack(spacing: 4) {
+                    Circle().fill(AppTheme.accentCyan).frame(width: 6, height: 6)
+                    Text("DeepSeek")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(AppTheme.accentCyan)
+                }
+                Spacer()
+                if let lastUpdated = viewModel.lastUpdated {
+                    Text("更新于 \(lastUpdated, style: .time)")
+                        .font(.system(size: 9))
+                        .foregroundColor(AppTheme.textMuted)
+                }
+            }
+            .padding(.horizontal, 2)
+            .padding(.top, 2)
         }
     }
 
