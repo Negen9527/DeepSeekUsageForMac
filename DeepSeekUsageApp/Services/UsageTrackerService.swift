@@ -12,7 +12,6 @@ final class UsageTrackerService {
 
     // MARK: - History
 
-    /// Load usage history from the App Group shared container.
     func loadHistory() -> [WidgetSnapshot.DailyPoint] {
         guard FileManager.default.fileExists(atPath: fileURL.path),
               let data = try? Data(contentsOf: fileURL) else {
@@ -21,13 +20,12 @@ final class UsageTrackerService {
         return (try? JSONDecoder().decode([WidgetSnapshot.DailyPoint].self, from: data)) ?? []
     }
 
-    /// Save usage history to the App Group shared container.
     func saveHistory(_ points: [WidgetSnapshot.DailyPoint]) {
         guard let data = try? JSONEncoder().encode(points) else { return }
         try? data.write(to: fileURL, options: .atomic)
     }
 
-    /// Record today's usage. If today exists in history, increment; otherwise append.
+    /// Record today's usage.
     func recordDailyUsage(tokens: Int, requests: Int, cost: Double) {
         var history = loadHistory()
         let today = dailyKey(for: Date())
@@ -49,7 +47,6 @@ final class UsageTrackerService {
             ))
         }
 
-        // Keep only last 90 days
         if history.count > 90 {
             history = Array(history.suffix(90))
         }
@@ -59,7 +56,7 @@ final class UsageTrackerService {
     /// Get the last 7 days of usage for the trend chart.
     func last7Days() -> [WidgetSnapshot.DailyPoint] {
         let history = loadHistory()
-        let keys = (0..<7).map { dailyKey(for: Calendar.current.date(byAdding: .day, value: -$0, to: Date())! ) }
+        let keys = (0..<7).map { dailyKey(for: Calendar.current.date(byAdding: .day, value: -$0, to: Date())!) }
         let lookup = Dictionary(uniqueKeysWithValues: history.map { ($0.dateString, $0) })
         return keys.reversed().map { day in
             lookup[day] ?? WidgetSnapshot.DailyPoint(dateString: day, tokens: 0, requests: 0, cost: 0)
@@ -68,21 +65,20 @@ final class UsageTrackerService {
 
     // MARK: - Monthly Aggregation
 
-    func currentMonthUsage() -> (promptTokens: Int, completionTokens: Int, totalRequests: Int, estimatedCost: Double) {
+    func currentMonthUsage() -> (promptTokens: Int, completionTokens: Int, totalRequests: Int, totalCost: Double) {
         let history = loadHistory()
         let thisMonth = monthKey(for: Date())
         let monthPoints = history.filter { monthKey(for: dateFromKey($0.dateString)) == thisMonth }
 
         let totalTokens = monthPoints.reduce(0) { $0 + $1.tokens }
-        let promptTokens = Int(Double(totalTokens) * 0.7) // Estimate 70/30 split
+        let promptTokens = Int(Double(totalTokens) * 0.7)
         let completionTokens = totalTokens - promptTokens
         let totalRequests = monthPoints.reduce(0) { $0 + $1.requests }
-        let estimatedCost = monthPoints.reduce(0.0) { $0 + $1.cost }
+        let totalCost = monthPoints.reduce(0.0) { $0 + $1.cost }
 
-        return (promptTokens, completionTokens, totalRequests, estimatedCost)
+        return (promptTokens, completionTokens, totalRequests, totalCost)
     }
 
-    /// Compute last month's usage for comparison.
     func lastMonthUsage() -> (tokens: Int, requests: Int, cost: Double) {
         let history = loadHistory()
         let calendar = Calendar.current
@@ -101,32 +97,26 @@ final class UsageTrackerService {
 
     // MARK: - Snapshot
 
-    /// Build a WidgetSnapshot and write it to shared UserDefaults for the widget to read.
-    func buildAndWriteSnapshot(balance: BalanceInfo?, monthlyBudget: Double) {
-        let monthly = currentMonthUsage()
+    func buildAndWriteSnapshot(usageData: UsageData?, monthlyBudget: Double) {
+        let monthly = usageData ?? UsageData(
+            promptTokens: 0, completionTokens: 0, totalRequests: 0, totalCost: 0
+        )
         let lastMonth = lastMonthUsage()
 
         let snapshot = WidgetSnapshot(
             lastUpdated: Date(),
-            balance: WidgetSnapshot.BalanceSnapshot(
-                currency: balance?.currency ?? "CNY",
-                totalBalance: balance?.totalBalance ?? 0,
-                grantedBalance: balance?.grantedBalance ?? 0,
-                toppedUpBalance: balance?.toppedUpBalance ?? 0,
-                isAvailable: balance?.isAvailable ?? false
-            ),
             monthlyUsage: WidgetSnapshot.MonthlyUsageSnapshot(
                 promptTokens: monthly.promptTokens,
                 completionTokens: monthly.completionTokens,
                 totalRequests: monthly.totalRequests,
-                estimatedCost: monthly.estimatedCost,
+                totalCost: monthly.totalCost,
                 monthlyBudget: monthlyBudget
             ),
             trend: last7Days(),
             monthlyComparison: WidgetSnapshot.MonthlyComparison(
-                currentMonthCost: monthly.estimatedCost,
+                currentMonthCost: monthly.totalCost,
                 previousMonthCost: lastMonth.cost,
-                currentMonthTokens: monthly.promptTokens + monthly.completionTokens,
+                currentMonthTokens: monthly.totalTokens,
                 previousMonthTokens: lastMonth.tokens,
                 currentMonthRequests: monthly.totalRequests,
                 previousMonthRequests: lastMonth.requests

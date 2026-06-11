@@ -20,9 +20,9 @@ struct LargeWidgetView: View {
             // Row 1: Three stat cards with staggered entrance
             HStack(spacing: 8) {
                 StatsCardView(
-                    icon: AppTheme.iconBalance,
-                    value: snapshot.formattedBalance(),
-                    label: "剩余余额",
+                    icon: AppTheme.iconCost,
+                    value: snapshot.formattedCost(),
+                    label: "本月费用",
                     accentColor: AppTheme.accentCyan,
                     delay: 0.0
                 )

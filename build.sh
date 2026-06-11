@@ -51,15 +51,13 @@ swiftc $SWIFT_BASE \
     -o "$BUILD_DIR/app_executable" \
     "$SCRIPT_DIR/Shared/Constants/AppConstants.swift" \
     "$SCRIPT_DIR/Shared/Theme/AppTheme.swift" \
-    "$SCRIPT_DIR/Shared/Models/BalanceInfo.swift" \
     "$SCRIPT_DIR/Shared/Models/WidgetSnapshot.swift" \
     "$SCRIPT_DIR/DeepSeekUsageApp/Services/KeychainService.swift" \
     "$SCRIPT_DIR/DeepSeekUsageApp/Services/DeepSeekAPIService.swift" \
     "$SCRIPT_DIR/DeepSeekUsageApp/Services/UsageTrackerService.swift" \
     "$SCRIPT_DIR/DeepSeekUsageApp/ViewModels/DashboardViewModel.swift" \
-    "$SCRIPT_DIR/DeepSeekUsageApp/Views/LoginView.swift" \
+    "$SCRIPT_DIR/DeepSeekUsageApp/Views/ConfigPanelView.swift" \
     "$SCRIPT_DIR/DeepSeekUsageApp/Views/MenuBarContentView.swift" \
-    "$SCRIPT_DIR/DeepSeekUsageApp/Views/SettingsView.swift" \
     "$SCRIPT_DIR/DeepSeekUsageApp/Views/DesktopWidgetView.swift" \
     "$SCRIPT_DIR/DeepSeekUsageWidget/Views/Components/CircularGaugeView.swift" \
     "$SCRIPT_DIR/DeepSeekUsageWidget/Views/Components/StatsCardView.swift" \
@@ -81,7 +79,6 @@ swiftc $SWIFT_BASE \
     -o "$BUILD_DIR/widget_executable" \
     "$SCRIPT_DIR/Shared/Constants/AppConstants.swift" \
     "$SCRIPT_DIR/Shared/Theme/AppTheme.swift" \
-    "$SCRIPT_DIR/Shared/Models/BalanceInfo.swift" \
     "$SCRIPT_DIR/Shared/Models/WidgetSnapshot.swift" \
     "$SCRIPT_DIR/DeepSeekUsageWidget/Views/Components/CircularGaugeView.swift" \
     "$SCRIPT_DIR/DeepSeekUsageWidget/Views/Components/StatsCardView.swift" \

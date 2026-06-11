@@ -6,6 +6,7 @@ struct DesktopWidgetView: View {
     @ObservedObject var viewModel: DashboardViewModel
     @State private var selectedSize: WidgetSize = .large
     @State private var useLineChart: Bool = true
+    @State private var showConfig: Bool = false
 
     enum WidgetSize: String, CaseIterable {
         case compact = "紧凑"
@@ -26,6 +27,9 @@ struct DesktopWidgetView: View {
         }
         .frame(minWidth: minWidth, maxWidth: maxWidth, minHeight: minHeight, maxHeight: maxHeight)
         .background(AppTheme.background)
+        .sheet(isPresented: $showConfig) {
+            ConfigPanelView(viewModel: viewModel)
+        }
     }
 
     // MARK: - Header
@@ -58,6 +62,15 @@ struct DesktopWidgetView: View {
                     .frame(width: 14, height: 14)
             }
 
+            // Settings button
+            Button(action: { showConfig = true }) {
+                Image(systemName: "gearshape.fill")
+                    .font(.system(size: 13))
+                    .foregroundColor(AppTheme.textMuted)
+            }
+            .buttonStyle(.plain)
+            .help("配置")
+
             if let lastUpdated = viewModel.lastUpdated {
                 Text("\(lastUpdated, style: .time)")
                     .font(.system(size: 9))
@@ -72,14 +85,43 @@ struct DesktopWidgetView: View {
 
     @ViewBuilder
     private var widgetContent: some View {
-        switch selectedSize {
-        case .compact: compactView
-        case .medium: mediumView
-        case .large: largeView
+        if viewModel.isTokenValid {
+            switch selectedSize {
+            case .compact: compactView
+            case .medium: mediumView
+            case .large: largeView
+            }
+        } else {
+            emptyStateView
         }
     }
 
-    // MARK: - Compact (similar to Small widget)
+    // MARK: - Empty State
+
+    private var emptyStateView: some View {
+        VStack(spacing: 16) {
+            Spacer(minLength: 40)
+            Image(systemName: "gearshape.fill")
+                .font(.system(size: 36))
+                .foregroundColor(AppTheme.textMuted)
+            Text("尚未配置 Token")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(AppTheme.textSecondary)
+            Text("点击右上角设置按钮\n输入你的 DeepSeek 平台 Token")
+                .font(.system(size: 11))
+                .foregroundColor(AppTheme.textMuted)
+                .multilineTextAlignment(.center)
+            Button("打开配置") {
+                showConfig = true
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(AppTheme.accentCyan)
+            Spacer(minLength: 40)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    // MARK: - Compact
 
     private var compactView: some View {
         VStack(spacing: 12) {
@@ -92,11 +134,11 @@ struct DesktopWidgetView: View {
             )
             .frame(width: 120, height: 120)
 
-            Text(snapshot.formattedBalance())
+            Text(snapshot.formattedCost())
                 .font(.system(size: 16, weight: .semibold, design: .rounded))
                 .foregroundColor(AppTheme.textSecondary)
 
-            Text("剩余余额")
+            Text("本月费用")
                 .font(.system(size: 10))
                 .foregroundColor(AppTheme.textMuted)
 
@@ -164,10 +206,10 @@ struct DesktopWidgetView: View {
 
     private var largeView: some View {
         VStack(spacing: 10) {
-            // Row 1: Stats cards with staggered entrance
+            // Row 1: Stats cards
             HStack(spacing: 8) {
-                StatsCardView(icon: AppTheme.iconBalance, value: snapshot.formattedBalance(),
-                              label: "剩余余额", accentColor: AppTheme.accentCyan, delay: 0.0)
+                StatsCardView(icon: AppTheme.iconCost, value: snapshot.formattedCost(),
+                              label: "本月费用", accentColor: AppTheme.accentCyan, delay: 0.0)
                 StatsCardView(icon: AppTheme.iconTokens, value: formatNumber(snapshot.totalTokens),
                               label: "本月Tokens", accentColor: AppTheme.accentGreen, delay: 0.1)
                 StatsCardView(icon: AppTheme.iconRequests, value: formatNumber(snapshot.monthlyUsage.totalRequests),
@@ -257,7 +299,7 @@ struct DesktopWidgetView: View {
             .padding(10)
             .background(RoundedRectangle(cornerRadius: 10).fill(AppTheme.surface))
 
-            // Row 6: Footer branding + update time
+            // Row 6: Footer
             HStack {
                 HStack(spacing: 4) {
                     Circle().fill(AppTheme.accentCyan).frame(width: 6, height: 6)
@@ -290,6 +332,28 @@ struct DesktopWidgetView: View {
             }
         }
         .frame(height: 4)
+    }
+
+    private func comparisonItem(label: String, current: Double, previous: Double,
+                                 format: @escaping (Double) -> String) -> some View {
+        let change = previous > 0 ? ((current - previous) / previous * 100) : 0
+        let isUp = change >= 0
+        return VStack(spacing: 2) {
+            Text(label)
+                .font(.system(size: 9))
+                .foregroundColor(AppTheme.textMuted)
+            Text(format(current))
+                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .foregroundColor(AppTheme.textPrimary)
+            HStack(spacing: 2) {
+                Image(systemName: isUp ? "arrow.up" : "arrow.down")
+                    .font(.system(size: 7, weight: .bold))
+                Text(String(format: "%.0f%%", abs(change)))
+                    .font(.system(size: 9, weight: .semibold))
+            }
+            .foregroundColor(isUp ? AppTheme.accentRed : AppTheme.accentGreen)
+        }
+        .frame(maxWidth: .infinity)
     }
 
     // MARK: - Helpers
@@ -326,30 +390,8 @@ struct DesktopWidgetView: View {
         switch selectedSize {
         case .compact: return 260
         case .medium:  return 200
-        case .large:   return 600
+        case .large:   return 620
         }
-    }
-
-    private func comparisonItem(label: String, current: Double, previous: Double,
-                                 format: @escaping (Double) -> String) -> some View {
-        let change = previous > 0 ? ((current - previous) / previous * 100) : 0
-        let isUp = change >= 0
-        return VStack(spacing: 2) {
-            Text(label)
-                .font(.system(size: 9))
-                .foregroundColor(AppTheme.textMuted)
-            Text(format(current))
-                .font(.system(size: 13, weight: .bold, design: .rounded))
-                .foregroundColor(AppTheme.textPrimary)
-            HStack(spacing: 2) {
-                Image(systemName: isUp ? "arrow.up" : "arrow.down")
-                    .font(.system(size: 7, weight: .bold))
-                Text(String(format: "%.0f%%", abs(change)))
-                    .font(.system(size: 9, weight: .semibold))
-            }
-            .foregroundColor(isUp ? AppTheme.accentRed : AppTheme.accentGreen)
-        }
-        .frame(maxWidth: .infinity)
     }
 
     private func formatNumber(_ n: Int) -> String {
@@ -358,11 +400,3 @@ struct DesktopWidgetView: View {
         return n.formatted()
     }
 }
-
-#if DEBUG
-struct DesktopWidgetView_Previews: PreviewProvider {
-    static var previews: some View {
-        DesktopWidgetView(viewModel: DashboardViewModel())
-    }
-}
-#endif

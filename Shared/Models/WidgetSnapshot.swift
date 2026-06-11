@@ -3,24 +3,15 @@ import Foundation
 /// The serialized payload shared between the host app and widget extension via App Group UserDefaults.
 struct WidgetSnapshot: Codable {
     let lastUpdated: Date
-    let balance: BalanceSnapshot
     let monthlyUsage: MonthlyUsageSnapshot
     let trend: [DailyPoint]
     let monthlyComparison: MonthlyComparison?
-
-    struct BalanceSnapshot: Codable {
-        let currency: String
-        let totalBalance: Double
-        let grantedBalance: Double
-        let toppedUpBalance: Double
-        let isAvailable: Bool
-    }
 
     struct MonthlyUsageSnapshot: Codable {
         let promptTokens: Int
         let completionTokens: Int
         let totalRequests: Int
-        let estimatedCost: Double
+        let totalCost: Double
         let monthlyBudget: Double
     }
 
@@ -46,7 +37,7 @@ struct WidgetSnapshot: Codable {
 extension WidgetSnapshot {
     var comparison: MonthlyComparison {
         monthlyComparison ?? MonthlyComparison(
-            currentMonthCost: monthlyUsage.estimatedCost,
+            currentMonthCost: monthlyUsage.totalCost,
             previousMonthCost: 0,
             currentMonthTokens: totalTokens,
             previousMonthTokens: 0,
@@ -61,7 +52,7 @@ extension WidgetSnapshot {
 
     var budgetUsedFraction: Double {
         guard monthlyUsage.monthlyBudget > 0 else { return 0 }
-        return min(monthlyUsage.estimatedCost / monthlyUsage.monthlyBudget, 1.0)
+        return min(monthlyUsage.totalCost / monthlyUsage.monthlyBudget, 1.0)
     }
 
     var budgetUsedPercentage: Int {
@@ -85,18 +76,11 @@ extension WidgetSnapshot {
     static var placeholder: WidgetSnapshot {
         WidgetSnapshot(
             lastUpdated: Date(),
-            balance: BalanceSnapshot(
-                currency: "CNY",
-                totalBalance: 78.00,
-                grantedBalance: 50.00,
-                toppedUpBalance: 28.00,
-                isAvailable: true
-            ),
             monthlyUsage: MonthlyUsageSnapshot(
                 promptTokens: 32100,
                 completionTokens: 13100,
                 totalRequests: 847,
-                estimatedCost: 34.20,
+                totalCost: 34.20,
                 monthlyBudget: 50.00
             ),
             trend: [
@@ -123,19 +107,12 @@ extension WidgetSnapshot {
 // MARK: - Formatting helpers
 
 extension WidgetSnapshot {
-    func formattedBalance() -> String {
-        let symbol = balance.currency == "CNY" ? "¥" : "$"
-        return String(format: "%@%.2f", symbol, balance.totalBalance)
-    }
-
     func formattedCost() -> String {
-        let symbol = balance.currency == "CNY" ? "¥" : "$"
-        return String(format: "%@%.2f", symbol, monthlyUsage.estimatedCost)
+        return String(format: "¥%.2f", monthlyUsage.totalCost)
     }
 
     func formattedBudget() -> String {
-        let symbol = balance.currency == "CNY" ? "¥" : "$"
-        return String(format: "%@%.2f", symbol, monthlyUsage.monthlyBudget)
+        return String(format: "¥%.2f", monthlyUsage.monthlyBudget)
     }
 }
 

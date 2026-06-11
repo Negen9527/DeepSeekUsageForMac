@@ -1,7 +1,7 @@
 import SwiftUI
 import WidgetKit
 
-/// Small widget (169×169 pt on macOS) — circular gauge + balance + branding.
+/// Small widget (169×169 pt on macOS) — circular gauge + cost + branding.
 struct SmallWidgetView: View {
     let entry: UsageEntry
 
@@ -19,11 +19,11 @@ struct SmallWidgetView: View {
 
             Spacer(minLength: 6)
 
-            Text(entry.snapshot.formattedBalance())
+            Text(entry.snapshot.formattedCost())
                 .font(.system(size: 15, weight: .semibold, design: .rounded))
                 .foregroundColor(AppTheme.textSecondary)
 
-            Text("余额")
+            Text("本月费用")
                 .font(.system(size: 9))
                 .foregroundColor(AppTheme.textMuted)
 
@@ -43,17 +43,3 @@ struct SmallWidgetView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
-
-#if DEBUG
-struct SmallWidgetView_Previews: PreviewProvider {
-    static var previews: some View {
-        SmallWidgetView(entry: UsageEntry(
-            date: Date(),
-            snapshot: .placeholder,
-            isPlaceholder: false
-        ))
-        .previewContext(WidgetPreviewContext(family: .systemSmall))
-        .containerBackground(AppTheme.background, for: .widget)
-    }
-}
-#endif

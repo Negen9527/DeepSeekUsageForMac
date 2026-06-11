@@ -5,7 +5,7 @@ enum AppConstants {
     static let snapshotKey = "widgetSnapshot"
     static let historyFileName = "usage_history.json"
     static let monthlyBudgetKey = "monthlyBudget"
-    static let apiKeyIdentifier = "com.deepseekusage.apikey"
+    static let tokenKeychainKey = "com.deepseekusage.token"
     static let refreshInterval: TimeInterval = 900
 
     static let appGroupContainer: URL = {

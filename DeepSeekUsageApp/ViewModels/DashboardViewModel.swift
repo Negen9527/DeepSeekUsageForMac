@@ -5,50 +5,49 @@ import WidgetKit
 
 @MainActor
 final class DashboardViewModel: ObservableObject {
-    @Published var balance: BalanceInfo?
     @Published var monthlyBudget: Double = 50.00
     @Published var isLoading = false
     @Published var lastUpdated: Date?
     @Published var errorMessage: String?
-    @Published var isAPIKeyValid = false
+    @Published var isTokenValid = false
+    @Published var lastSnapshot: WidgetSnapshot?
+    @Published var usageData: UsageData?
 
     private let keychain = KeychainService()
     private var apiService: DeepSeekAPIService?
     private let tracker = UsageTrackerService()
     private var refreshTimer: AnyCancellable?
-    private var apiKey: String?
-
-    // Cache snapshot data for direct widget reads in case of issues
-    @Published var lastSnapshot: WidgetSnapshot?
+    private var token: String?
 
     init() {
-        loadAPIKey()
+        loadToken()
         loadBudget()
-        if isAPIKeyValid {
+        if isTokenValid {
+            writeSnapshot()
             Task { await refresh() }
         }
         startTimer()
     }
 
-    // MARK: - API Key
+    // MARK: - Token
 
-    func loadAPIKey() {
-        apiKey = try? keychain.read(key: AppConstants.apiKeyIdentifier)
-        if let apiKey {
-            apiService = DeepSeekAPIService(apiKey: apiKey)
-            isAPIKeyValid = true
+    func loadToken() {
+        token = try? keychain.read(key: AppConstants.tokenKeychainKey)
+        if let token {
+            apiService = DeepSeekAPIService(token: token)
+            isTokenValid = true
         }
     }
 
-    func saveAPIKey(_ key: String) async -> Bool {
+    func saveToken(_ newToken: String) async -> Bool {
         do {
-            let service = DeepSeekAPIService(apiKey: key)
-            let valid = try await service.validateAPIKey()
+            let service = DeepSeekAPIService(token: newToken)
+            let valid = try await service.validateToken()
             if valid {
-                try keychain.save(key: AppConstants.apiKeyIdentifier, value: key)
-                self.apiKey = key
+                try keychain.save(key: AppConstants.tokenKeychainKey, value: newToken)
+                self.token = newToken
                 self.apiService = service
-                self.isAPIKeyValid = true
+                self.isTokenValid = true
                 self.errorMessage = nil
                 await refresh()
                 return true
@@ -59,12 +58,13 @@ final class DashboardViewModel: ObservableObject {
         return false
     }
 
-    func clearAPIKey() {
-        try? keychain.delete(key: AppConstants.apiKeyIdentifier)
-        apiKey = nil
+    func clearToken() {
+        try? keychain.delete(key: AppConstants.tokenKeychainKey)
+        token = nil
         apiService = nil
-        isAPIKeyValid = false
-        balance = nil
+        isTokenValid = false
+        usageData = nil
+        writeSnapshot()
     }
 
     // MARK: - Budget
@@ -98,16 +98,27 @@ final class DashboardViewModel: ObservableObject {
         errorMessage = nil
 
         do {
-            let info = try await apiService.fetchBalance()
-            balance = info
+            let now = Date()
+            let calendar = Calendar.current
+            let month = calendar.component(.month, from: now)
+            let year = calendar.component(.year, from: now)
+
+            let data = try await apiService.fetchUsage(month: month, year: year)
+            usageData = data
             lastUpdated = Date()
+
+            // Record today's usage to local history
+            tracker.recordDailyUsage(
+                tokens: data.totalTokens,
+                requests: data.totalRequests,
+                cost: data.totalCost
+            )
             writeSnapshot()
         } catch {
             errorMessage = error.localizedDescription
             if case APIError.unauthorized = error {
-                isAPIKeyValid = false
+                isTokenValid = false
             }
-            // Still write snapshot with last-known data
             writeSnapshot()
         }
 
@@ -117,7 +128,10 @@ final class DashboardViewModel: ObservableObject {
     // MARK: - Snapshot
 
     private func writeSnapshot() {
-        tracker.buildAndWriteSnapshot(balance: balance, monthlyBudget: monthlyBudget)
+        tracker.buildAndWriteSnapshot(
+            usageData: usageData,
+            monthlyBudget: monthlyBudget
+        )
         WidgetCenter.shared.reloadAllTimelines()
     }
 

@@ -45,3 +45,9 @@ Icon
 # Other
 *.png
 *.jpg
+
+# Claude Code
+.claude/
+
+# Xcode project (build.sh handles compilation)
+DeepSeekUsageForMac.xcodeproj/
