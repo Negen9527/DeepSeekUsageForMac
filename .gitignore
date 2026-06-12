@@ -45,6 +45,8 @@ Icon
 # Other
 *.png
 *.jpg
+!screenshots/*.png
+!screenshots/*.jpg
 
 # Claude Code
 .claude/
