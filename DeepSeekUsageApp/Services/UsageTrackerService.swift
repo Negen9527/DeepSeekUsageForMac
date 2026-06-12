@@ -98,9 +98,25 @@ final class UsageTrackerService {
 
     func buildAndWriteSnapshot(usageData: UsageData?, monthlyBudget: Double) -> WidgetSnapshot {
         let monthly = usageData ?? UsageData(
-            promptTokens: 0, completionTokens: 0, totalRequests: 0, totalCost: 0
+            promptTokens: 0, completionTokens: 0, totalRequests: 0, totalCost: 0, modelBreakdown: [], balance: nil, dailyPoints: []
         )
         let lastMonth = lastMonthUsage()
+
+        // Use API daily data for trend (last 14 days); fall back to local history if API data is empty
+        let trend: [WidgetSnapshot.DailyPoint]
+        if let apiDaily = usageData?.dailyPoints, !apiDaily.isEmpty {
+            let recent = apiDaily
+            trend = recent.map { pt in
+                WidgetSnapshot.DailyPoint(
+                    dateString: pt.displayDate,
+                    tokens: pt.tokens,
+                    requests: pt.requests,
+                    cost: pt.cost
+                )
+            }
+        } else {
+            trend = last7Days()
+        }
 
         let snapshot = WidgetSnapshot(
             lastUpdated: Date(),
@@ -111,7 +127,7 @@ final class UsageTrackerService {
                 totalCost: monthly.totalCost,
                 monthlyBudget: monthlyBudget
             ),
-            trend: last7Days(),
+            trend: trend,
             monthlyComparison: WidgetSnapshot.MonthlyComparison(
                 currentMonthCost: monthly.totalCost,
                 previousMonthCost: lastMonth.cost,

@@ -109,9 +109,17 @@ cp "$BUILD_DIR/widget_executable" "$APP_DIR/Contents/PlugIns/DeepSeekUsageWidget
 chmod +x "$APP_DIR/Contents/MacOS/DeepSeekUsageApp"
 chmod +x "$APP_DIR/Contents/PlugIns/DeepSeekUsageWidget.appex/Contents/MacOS/DeepSeekUsageWidgetExtension"
 
-# Copy assets
-cp -r "$SCRIPT_DIR/DeepSeekUsageApp/Assets.xcassets" "$APP_DIR/Contents/Resources/" 2>/dev/null || true
-cp -r "$SCRIPT_DIR/DeepSeekUsageWidget/Assets.xcassets" "$APP_DIR/Contents/PlugIns/DeepSeekUsageWidget.appex/Contents/Resources/" 2>/dev/null || true
+# Create and copy app icon
+info "Creating app icon..."
+python3 "$SCRIPT_DIR/create_icns.py" 2>/dev/null
+if [ -f "$BUILD_DIR/AppIcon.icns" ]; then
+    cp "$BUILD_DIR/AppIcon.icns" "$APP_DIR/Contents/Resources/AppIcon.icns"
+    ok "App icon created"
+else
+    # Generate icns from iconset
+    iconutil -c icns "$BUILD_DIR/icon.iconset" -o "$BUILD_DIR/AppIcon.icns" 2>/dev/null
+    cp "$BUILD_DIR/AppIcon.icns" "$APP_DIR/Contents/Resources/AppIcon.icns" 2>/dev/null || info "Using existing icon"
+fi
 
 # ==================== Create Info.plist (App) ====================
 cat > "$APP_DIR/Contents/Info.plist" << 'PLIST'
@@ -125,6 +133,8 @@ cat > "$APP_DIR/Contents/Info.plist" << 'PLIST'
 	<string>DeepSeek 用量</string>
 	<key>CFBundleExecutable</key>
 	<string>DeepSeekUsageApp</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.deepseekusage.app</string>
 	<key>CFBundleInfoDictionaryVersion</key>

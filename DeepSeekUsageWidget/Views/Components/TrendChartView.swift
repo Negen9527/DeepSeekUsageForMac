@@ -17,7 +17,6 @@ struct TrendChartView: View {
 
     var body: some View {
         VStack(spacing: 6) {
-            // Chart bars
             GeometryReader { geo in
                 HStack(alignment: .bottom, spacing: 6) {
                     ForEach(dataPoints, id: \.dateString) { point in
@@ -37,7 +36,6 @@ struct TrendChartView: View {
                 }
             }
 
-            // Day labels
             HStack(spacing: 6) {
                 ForEach(dataPoints, id: \.dateString) { point in
                     Text(point.dateString)
@@ -50,7 +48,8 @@ struct TrendChartView: View {
     }
 }
 
-// Version for widget use (no UIScreen dependency, fixed sizing)
+// MARK: - Compact version with hover tooltip (overlay style)
+
 struct TrendChartViewCompact: View {
     let dataPoints: [WidgetSnapshot.DailyPoint]
     let chartHeight: CGFloat
@@ -58,6 +57,7 @@ struct TrendChartViewCompact: View {
     let spacing: CGFloat
 
     @State private var barScales: [CGFloat]
+    @State private var hoveredIndex: Int?
 
     init(dataPoints: [WidgetSnapshot.DailyPoint], chartHeight: CGFloat, barWidth: CGFloat, spacing: CGFloat) {
         self.dataPoints = dataPoints
@@ -78,12 +78,15 @@ struct TrendChartViewCompact: View {
         return formatter.string(from: Date())
     }
 
+    private let tooltipReservedHeight: CGFloat = 24
+
     var body: some View {
         VStack(spacing: 4) {
             HStack(alignment: .bottom, spacing: spacing) {
                 ForEach(dataPoints.indices, id: \.self) { index in
                     let point = dataPoints[index]
                     let targetHeight = max(CGFloat(point.tokens) / CGFloat(maxValue) * chartHeight, 2)
+                    let isHovered = hoveredIndex == index
 
                     VStack(spacing: 0) {
                         Spacer(minLength: 0)
@@ -93,10 +96,59 @@ struct TrendChartViewCompact: View {
                                 : AppTheme.accentCyan.opacity(0.35)
                             )
                             .frame(width: barWidth, height: barScales[index] * targetHeight)
+                            .brightness(isHovered ? 0.25 : 0)
+                            .scaleEffect(isHovered ? 1.08 : 1.0)
+                            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isHovered)
                     }
+                    .frame(height: chartHeight)
                 }
             }
             .frame(height: chartHeight)
+            .onContinuousHover { phase in
+                switch phase {
+                case .active(let location):
+                    let estimatedIndex = Int((location.x / (barWidth + spacing)).rounded())
+                    let clamped = min(max(estimatedIndex, 0), dataPoints.count - 1)
+                    if hoveredIndex != clamped {
+                        withAnimation(.easeInOut(duration: 0.1)) {
+                            hoveredIndex = clamped
+                        }
+                    }
+                case .ended:
+                    withAnimation(.easeInOut(duration: 0.1)) {
+                        hoveredIndex = nil
+                    }
+                }
+            }
+            .overlay(alignment: .top) {
+                // Reserved tooltip space — always occupies fixed height to prevent layout deformation
+                VStack {
+                    if let index = hoveredIndex, index < dataPoints.count {
+                        let pt = dataPoints[index]
+                        let chartWidth = CGFloat(dataPoints.count) * barWidth + CGFloat(dataPoints.count - 1) * spacing
+                        let offsetX = (CGFloat(index) - CGFloat(dataPoints.count - 1) / 2) * (barWidth + spacing)
+                        let tipHalf: CGFloat = 85
+                        let maxOffset = (chartWidth / 2) - tipHalf
+                        let clampedX = min(max(offsetX, -maxOffset), maxOffset)
+                        HStack(spacing: 4) {
+                            Text(pt.dateString).font(.system(size: 9, weight: .semibold)).foregroundColor(AppTheme.accentCyan)
+                            Text("·").font(.system(size: 8)).foregroundColor(AppTheme.textMuted)
+                            Text(formatNumber(pt.tokens)).font(.system(size: 9, weight: .medium)).foregroundColor(AppTheme.textPrimary)
+                            Text("·").font(.system(size: 8)).foregroundColor(AppTheme.textMuted)
+                            Text("¥\(String(format: "%.2f", pt.cost))").font(.system(size: 9)).foregroundColor(AppTheme.accentGreen)
+                            Text("·").font(.system(size: 8)).foregroundColor(AppTheme.textMuted)
+                            Text("\(pt.requests)次").font(.system(size: 9)).foregroundColor(AppTheme.textMuted)
+                        }
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 3)
+                        .background(RoundedRectangle(cornerRadius: 4).fill(AppTheme.surfaceElevated))
+                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(AppTheme.accentCyan.opacity(0.3), lineWidth: 0.5))
+                        .offset(x: clampedX)
+                    }
+                }
+                .frame(height: tooltipReservedHeight)
+                .offset(y: -chartHeight - 2)
+            }
 
             HStack(spacing: spacing) {
                 ForEach(dataPoints, id: \.dateString) { point in
@@ -107,9 +159,7 @@ struct TrendChartViewCompact: View {
                 }
             }
         }
-        .onAppear {
-            animateBars()
-        }
+        .onAppear { animateBars() }
         .onChange(of: dataPoints.map(\.tokens)) { _, _ in
             barScales = Array(repeating: CGFloat(0), count: dataPoints.count)
             animateBars()
@@ -123,10 +173,15 @@ struct TrendChartViewCompact: View {
             }
         }
     }
+
+    private func formatNumber(_ n: Int) -> String {
+        if n >= 10000 { return String(format: "%.1fk", Double(n) / 1000.0) }
+        return n.formatted()
+    }
 }
 
 #if DEBUG
-struct TrendChartView_Previews: PreviewProvider {
+struct TrendChartViewCompact_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
             AppTheme.background

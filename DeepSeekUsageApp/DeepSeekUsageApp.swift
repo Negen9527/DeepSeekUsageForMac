@@ -8,7 +8,7 @@ struct DeepSeekUsageApp: App {
         // Main floating desktop widget window
         WindowGroup {
             DesktopWidgetView(viewModel: viewModel)
-                .frame(minWidth: 380, maxWidth: 420, minHeight: 520, maxHeight: 620)
+                .fixedSize()
                 .onAppear {
                     configureFloatingWindow()
                 }

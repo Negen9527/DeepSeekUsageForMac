@@ -10,6 +10,7 @@ struct StatsCardView: View {
     let delay: Double
 
     @State private var isVisible: Bool = false
+    @State private var isHovered: Bool = false
 
     init(icon: String, value: String, label: String, accentColor: Color = AppTheme.accentCyan, delay: Double = 0) {
         self.icon = icon
@@ -35,19 +36,26 @@ struct StatsCardView: View {
                 .font(.system(size: 10))
                 .foregroundColor(AppTheme.textMuted)
                 .lineLimit(1)
+                .minimumScaleFactor(0.7)
         }
         .padding(10)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 10)
-                .fill(AppTheme.surface)
+                .fill(isHovered ? AppTheme.surfaceLight : AppTheme.surface)
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(accentColor.opacity(0.15), lineWidth: 1)
+                        .stroke(isHovered ? accentColor.opacity(0.35) : accentColor.opacity(0.15), lineWidth: 1)
                 )
         )
-        .scaleEffect(isVisible ? 1 : 0.85)
+        .scaleEffect(isHovered ? 1.03 : (isVisible ? 1 : 0.85))
+        .shadow(color: isHovered ? accentColor.opacity(0.15) : .clear, radius: 8)
         .opacity(isVisible ? 1 : 0)
+        .onHover { inside in
+            withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
+                isHovered = inside
+            }
+        }
         .onAppear {
             withAnimation(.spring(response: 0.5, dampingFraction: 0.7).delay(delay)) {
                 isVisible = true

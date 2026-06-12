@@ -130,40 +130,20 @@ struct ConfigPanelView: View {
 
                     Divider()
 
-                    // Refresh
+                    // Last updated info
                     VStack(alignment: .leading, spacing: 8) {
                         Text("数据")
                             .font(.system(size: 12, weight: .semibold))
                             .foregroundColor(AppTheme.textSecondary)
 
-                        HStack {
-                            if let lastUpdated = viewModel.lastUpdated {
-                                Text("上次更新: \(lastUpdated, style: .time)")
-                                    .font(.caption)
-                                    .foregroundColor(AppTheme.textMuted)
-                            } else {
-                                Text("尚未获取数据")
-                                    .font(.caption)
-                                    .foregroundColor(AppTheme.textMuted)
-                            }
-                            Spacer()
-                            Button(action: {
-                                Task { await viewModel.refresh() }
-                            }) {
-                                HStack(spacing: 4) {
-                                    if viewModel.isLoading {
-                                        ProgressView()
-                                            .scaleEffect(0.7)
-                                            .frame(width: 14, height: 14)
-                                    } else {
-                                        Image(systemName: AppTheme.iconRefresh)
-                                    }
-                                    Text("立即刷新")
-                                }
-                            }
-                            .disabled(!viewModel.isTokenValid || viewModel.isLoading)
-                            .buttonStyle(.bordered)
-                            .controlSize(.small)
+                        if let lastUpdated = viewModel.lastUpdated {
+                            Text("上次更新: \(lastUpdated, style: .time)")
+                                .font(.caption)
+                                .foregroundColor(AppTheme.textMuted)
+                        } else {
+                            Text("尚未获取数据")
+                                .font(.caption)
+                                .foregroundColor(AppTheme.textMuted)
                         }
                     }
                 }
