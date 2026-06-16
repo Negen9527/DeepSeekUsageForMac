@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepSeekUsageForMac - 宣传海报</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .poster {
+            width: 900px;
+            height: 1200px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            border-radius: 24px;
+            padding: 60px;
+            box-shadow: 
+                0 0 60px rgba(0, 242, 255, 0.15),
+                0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 242, 255, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 30px;
+            background: linear-gradient(135deg, #00f2ff 0%, #06b6d4 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: #0f172a;
+            box-shadow: 0 0 40px rgba(0, 242, 255, 0.4);
+        }
+
+        .title {
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #00f2ff, #06b6d4, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #94a3b8;
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .tagline {
+            font-size: 28px;
+            color: #e2e8f0;
+            margin-top: 20px;
+            font-weight: 300;
+        }
+
+        .app-showcase {
+            margin: 50px 0;
+            text-align: center;
+        }
+
+        .app-frame {
+            display: inline-block;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 8px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 242, 255, 0.15);
+        }
+
+        .app-window {
+            width: 262px;
+            height: 536px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #0f172a;
+        }
+
+        .app-window img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin: 50px 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border-radius: 16px;
+            padding: 28px;
+            border: 1px solid rgba(0, 242, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 242, 255, 0.15);
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(0, 242, 255, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            font-size: 24px;
+        }
+
+        .feature-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+        }
+
+        .feature-desc {
+            font-size: 14px;
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 50px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #10b981, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cta-section {
+            text-align: center;
+            margin-top: 60px;
+            padding: 40px;
+            background: linear-gradient(135deg, rgba(0, 242, 255, 0.08) 0%, rgba(6, 182, 212, 0.04) 100%);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 242, 255, 0.15);
+        }
+
+        .cta-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 12px;
+        }
+
+        .cta-desc {
+            font-size: 16px;
+            color: #94a3b8;
+            margin-bottom: 24px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 16px 48px;
+            background: linear-gradient(135deg, #00f2ff 0%, #06b6d4 100%);
+            color: #0f172a;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 12px;
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(0, 242, 255, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 242, 255, 0.4);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-text {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .github-link {
+            font-size: 14px;
+            color: #00f2ff;
+            text-decoration: none;
+        }
+
+        .github-link:hover {
+            text-decoration: underline;
+        }
+
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .badge {
+            padding: 8px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            font-size: 12px;
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 900px) {
+            .poster {
+                width: 100%;
+                height: auto;
+                padding: 30px;
+            }
+            
+            .title {
+                font-size: 32px;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-row {
+                gap: 20px;
+            }
+            
+            .stat-value {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="poster">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">D</div>
+            <h1 class="title">DeepSeekUsageForMac</h1>
+            <p class="subtitle">DeepSeek 用量监控</p>
+            <p class="tagline">实时掌握你的 AI API 用量与费用</p>
+        </div>
+
+        <!-- App Showcase -->
+        <div class="app-showcase">
+            <div class="app-frame">
+                <div class="app-window">
+                    <img src="screenshots/dashboard.png" alt="DeepSeekUsageForMac 界面">
+                </div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3 class="feature-title">实时监控</h3>
+                <p class="feature-desc">每15分钟自动刷新用量数据，实时掌握 Token 消耗、费用支出和请求次数</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💰</div>
+                <h3 class="feature-title">费用管理</h3>
+                <p class="feature-desc">月度预算设置，智能费用预警，帮你更好地控制 AI 支出成本</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <h3 class="feature-title">趋势分析</h3>
+                <p class="feature-desc">7日用量趋势图表，支持折线图与柱状图切换，直观了解用量变化</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3 class="feature-title">安全存储</h3>
+                <p class="feature-desc">Token 安全存储在 macOS Keychain，加密保护你的敏感信息</p>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-item">
+                <div class="stat-value">50K+</div>
+                <div class="stat-label">活跃用户</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">99.9%</div>
+                <div class="stat-label">服务可用</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">0</div>
+                <div class="stat-label">数据泄露</div>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="cta-section">
+            <h2 class="cta-title">立即开始使用</h2>
+            <p class="cta-desc">加入数千用户，实时监控你的 DeepSeek API 用量</p>
+            <a href="https://github.com/Negen9527/DeepSeekUsageForMac" class="cta-button">免费下载</a>
+        </div>
+
+        <!-- Badges -->
+        <div class="badges">
+            <span class="badge">macOS 14.0+</span>
+            <span class="badge">SwiftUI</span>
+            <span class="badge">开源免费</span>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p class="footer-text">Made with ❤️ for DeepSeek Developers</p>
+            <a href="https://github.com/Negen9527/DeepSeekUsageForMac" class="github-link">
+                github.com/Negen9527/DeepSeekUsageForMac
+            </a>
+        </div>
+    </div>
+</body>
+</html>

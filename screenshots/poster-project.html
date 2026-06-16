@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepSeekUsageForMac - 项目介绍</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 1920px;
+            height: 1080px;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #0a0f18;
+        }
+
+        .poster {
+            width: 1920px;
+            height: 1080px;
+            position: relative;
+            display: flex;
+            background: linear-gradient(160deg, #0a0f18 0%, #121a25 40%, #0d1520 100%);
+        }
+
+        /* 背景装饰 */
+        .bg-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(0, 200, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 200, 255, 0.03) 1px, transparent 1px);
+            background-size: 80px 80px;
+            pointer-events: none;
+        }
+
+        .glow-1 {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(0, 200, 255, 0.06) 0%, transparent 60%);
+            top: -300px;
+            right: -200px;
+            pointer-events: none;
+        }
+
+        .glow-2 {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.04) 0%, transparent 60%);
+            bottom: -200px;
+            left: 10%;
+            pointer-events: none;
+        }
+
+        /* 左侧内容 */
+        .left-section {
+            width: 55%;
+            padding: 80px 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #00c8ff, #00ff88);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #0a0f18;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 600;
+            color: #00c8ff;
+        }
+
+        .main-title {
+            font-size: 64px;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.15;
+            margin-bottom: 24px;
+        }
+
+        .main-title .highlight {
+            background: linear-gradient(90deg, #00c8ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .description {
+            font-size: 22px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        /* 核心功能 */
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            background: rgba(0, 200, 255, 0.05);
+            border: 1px solid rgba(0, 200, 255, 0.15);
+            border-radius: 12px;
+            padding: 16px 18px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .feature-icon {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            background: linear-gradient(135deg, rgba(0, 200, 255, 0.2), rgba(0, 255, 136, 0.1));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .feature-content h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .feature-content p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        /* Git 地址 */
+        .git-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .git-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 14px 20px;
+        }
+
+        .git-icon {
+            font-size: 22px;
+            color: #ffffff;
+        }
+
+        .git-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .git-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 2px;
+        }
+
+        .git-url {
+            font-size: 14px;
+            color: #00c8ff;
+            font-family: 'SF Mono', 'Menlo', monospace;
+        }
+
+        .tech-badges {
+            display: flex;
+            gap: 10px;
+        }
+
+        .tech-badge {
+            background: rgba(0, 200, 255, 0.1);
+            border: 1px solid rgba(0, 200, 255, 0.2);
+            border-radius: 20px;
+            padding: 8px 14px;
+            font-size: 12px;
+            color: #00c8ff;
+            font-weight: 500;
+        }
+
+        /* 右侧展示 */
+        .right-section {
+            width: 45%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 60px;
+        }
+
+        .app-preview {
+            position: relative;
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .preview-window {
+            background: #162028;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.5),
+                0 0 80px rgba(0, 200, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .preview-header {
+            height: 44px;
+            background: #0f171e;
+            display: flex;
+            align-items: center;
+            padding: 0 14px;
+            gap: 7px;
+        }
+
+        .preview-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+        }
+
+        .preview-dot.red { background: #ff5f56; }
+        .preview-dot.yellow { background: #ffbd2e; }
+        .preview-dot.green { background: #27ca40; }
+
+        .preview-title {
+            margin-left: 10px;
+            font-size: 12px;
+            color: #00c8ff;
+            font-weight: 600;
+        }
+
+        .preview-body {
+            padding: 14px;
+        }
+
+        .preview-stats {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .preview-stat {
+            flex: 1;
+            background: #1a2530;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .preview-stat .value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .preview-stat .label {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 2px;
+        }
+
+        .preview-stat.cyan .value { color: #00c8ff; }
+        .preview-stat.green .value { color: #00ff88; }
+        .preview-stat.yellow .value { color: #ffcc00; }
+
+        .preview-balance {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .preview-balance-item {
+            flex: 1;
+            background: #1a2530;
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        .preview-balance-item .label {
+            font-size: 8px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .preview-balance-item .value {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-top: 2px;
+        }
+
+        .preview-chart {
+            background: #1a2530;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .preview-chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .preview-chart-title {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .preview-chart-tabs {
+            display: flex;
+            gap: 6px;
+        }
+
+        .preview-chart-tab {
+            padding: 3px 8px;
+            background: rgba(0, 200, 255, 0.15);
+            color: #00c8ff;
+            border-radius: 3px;
+            font-size: 9px;
+        }
+
+        .preview-chart-area {
+            height: 60px;
+            background: linear-gradient(180deg, rgba(0, 200, 255, 0.08) 0%, transparent 100%);
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preview-chart-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 80'%3E%3Cpath d='M0,60 Q40,55 80,45 T160,50 T240,35 T320,40 T400,30' fill='none' stroke='%2300c8ff' stroke-width='2'/%3E%3C/svg%3E") no-repeat center;
+            background-size: cover;
+        }
+
+        .preview-budget {
+            background: #1a2530;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .preview-budget-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            margin-bottom: 6px;
+        }
+
+        .preview-budget-label { color: rgba(255, 255, 255, 0.6); }
+        .preview-budget-value { color: #ffffff; font-weight: 600; }
+
+        .preview-budget-bar {
+            height: 5px;
+            background: #0f171e;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .preview-budget-fill {
+            height: 100%;
+            width: 16%;
+            background: linear-gradient(90deg, #00ff88, #ffcc00);
+            border-radius: 3px;
+        }
+
+        /* 浮动标签 */
+        .floating-tag {
+            position: absolute;
+            background: rgba(0, 200, 255, 0.15);
+            border: 1px solid rgba(0, 200, 255, 0.3);
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 12px;
+            color: #00c8ff;
+            white-space: nowrap;
+        }
+
+        .tag-1 {
+            top: 80px;
+            right: 60px;
+        }
+
+        .tag-2 {
+            bottom: 120px;
+            left: 60px;
+        }
+
+        /* 底部 */
+        .bottom-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 70px;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .bottom-brand {
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .bottom-info {
+            display: flex;
+            gap: 24px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="poster">
+        <div class="bg-grid"></div>
+        <div class="glow-1"></div>
+        <div class="glow-2"></div>
+
+        <div class="left-section">
+            <div class="logo-row">
+                <div class="logo-icon">DS</div>
+                <div class="logo-text">DeepSeekUsageForMac</div>
+            </div>
+
+            <h1 class="main-title">
+                DeepSeek API<br>
+                <span class="highlight">用量监控</span><br>
+                macOS 桌面组件
+            </h1>
+
+            <p class="description">
+                一个轻量级 macOS 悬浮窗口应用，实时追踪 DeepSeek 平台 API Token 消耗与费用，助你精准掌控 AI 开发成本。
+            </p>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F4CA;</div>
+                    <div class="feature-content">
+                        <h4>实时用量监控</h4>
+                        <p>Token、费用、请求数据实时刷新</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F4C8;</div>
+                    <div class="feature-content">
+                        <h4>趋势分析图表</h4>
+                        <p>7日用量折线/柱状图切换查看</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F3AF;</div>
+                    <div class="feature-content">
+                        <h4>预算管理</h4>
+                        <p>设置月度预算，超支实时预警</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F5A5;</div>
+                    <div class="feature-content">
+                        <h4>桌面悬浮常驻</h4>
+                        <p>始终在最上层，随时查看</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F4F1;</div>
+                    <div class="feature-content">
+                        <h4>WidgetKit 支持</h4>
+                        <p>系统小组件，通知中心快捷查看</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F512;</div>
+                    <div class="feature-content">
+                        <h4>安全存储</h4>
+                        <p>Keychain 加密存储 Token</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="git-section">
+                <div class="git-box">
+                    <span class="git-icon">&#x1F4BB;</span>
+                    <div class="git-info">
+                        <span class="git-label">GitHub 仓库</span>
+                        <span class="git-url">github.com/user/DeepSeekUsageForMac</span>
+                    </div>
+                </div>
+                <div class="tech-badges">
+                    <span class="tech-badge">Swift 5.9+</span>
+                    <span class="tech-badge">SwiftUI</span>
+                    <span class="tech-badge">macOS 14.0+</span>
+                    <span class="tech-badge">MIT License</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-section">
+            <div class="app-preview">
+                <div class="floating-tag tag-1">&#x2714; 15分钟自动刷新</div>
+                <div class="floating-tag tag-2">&#x2714; 离线数据缓存</div>
+                
+                <div class="preview-window">
+                    <div class="preview-header">
+                        <div class="preview-dot red"></div>
+                        <div class="preview-dot yellow"></div>
+                        <div class="preview-dot green"></div>
+                        <span class="preview-title">DeepSeek 用量</span>
+                    </div>
+                    <div class="preview-body">
+                        <div class="preview-stats">
+                            <div class="preview-stat cyan">
+                                <div class="value">8.07</div>
+                                <div class="label">本月费用</div>
+                            </div>
+                            <div class="preview-stat green">
+                                <div class="value">63.4M</div>
+                                <div class="label">本月 Tokens</div>
+                            </div>
+                            <div class="preview-stat yellow">
+                                <div class="value">719</div>
+                                <div class="label">本月请求</div>
+                            </div>
+                        </div>
+
+                        <div class="preview-balance">
+                            <div class="preview-balance-item">
+                                <div class="label">&#x1F4B0; 充值余额</div>
+                                <div class="value">19.25</div>
+                            </div>
+                            <div class="preview-balance-item">
+                                <div class="label">&#x1F381; 赠送余额</div>
+                                <div class="value">0.00</div>
+                            </div>
+                            <div class="preview-balance-item">
+                                <div class="label">&#x1F4CA; 可用 Tokens</div>
+                                <div class="value">6.4M</div>
+                            </div>
+                        </div>
+
+                        <div class="preview-chart">
+                            <div class="preview-chart-header">
+                                <span class="preview-chart-title">6月用量趋势</span>
+                                <div class="preview-chart-tabs">
+                                    <span class="preview-chart-tab">折线</span>
+                                    <span class="preview-chart-tab">柱状</span>
+                                </div>
+                            </div>
+                            <div class="preview-chart-area">
+                                <div class="preview-chart-line"></div>
+                            </div>
+                        </div>
+
+                        <div class="preview-budget">
+                            <div class="preview-budget-header">
+                                <span class="preview-budget-label">总费用</span>
+                                <span class="preview-budget-value">8.07 / 50.00 (16%)</span>
+                            </div>
+                            <div class="preview-budget-bar">
+                                <div class="preview-budget-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-bar">
+            <span class="bottom-brand">DeepSeekUsageForMac</span>
+            <div class="bottom-info">
+                <span>Swift | SwiftUI | AppKit</span>
+                <span>macOS 14.0+ (Sonoma)</span>
+                <span>MIT License</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
