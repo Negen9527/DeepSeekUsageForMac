@@ -1,5 +1,13 @@
 # DeepSeekUsageForMac
 
+![GitHub Stars](https://img.shields.io/github/stars/Negen9527/DeepSeekUsageForMac)
+![GitHub Forks](https://img.shields.io/github/forks/Negen9527/DeepSeekUsageForMac)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+
+**[GitHub 仓库](https://github.com/Negen9527/DeepSeekUsageForMac)** | **[下载 App](https://github.com/Negen9527/DeepSeekUsageForMac/releases)**
+
+---
+
 一个 macOS 桌面悬浮组件，用于实时查看 DeepSeek 平台 API 的用量和费用信息。
 
 ## 🌟 功能特性
